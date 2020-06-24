@@ -16,6 +16,13 @@ class MyApp extends StatelessWidget {
       home: MyHomePage(title: '하면 좋은 일'),
     );
   }
+
+  ThemeData appTheme() {
+    ThemeData base = ThemeData.light();
+    return base.copyWith(
+      canvasColor: Colors.black12,
+    );
+  }
 }
 
 class MyHomePage extends StatefulWidget {
@@ -27,16 +34,84 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-
-
 class _MyHomePageState extends State<MyHomePage> {
-  List highList = ["sdfkjsldkjfls", 'will', 'wow','teo','loo'];
-  List mediumList = ["sdfkjsldkjfls", 'will', 'wow','teo','loo'];
-  List lowList = ["sdfkjsldkjfls", 'will', 'wow','teo','loo'];
+  List highList = [
+    {'check': false, 'title': 'sdfkjsldkjfls', 'subtitle': '2020.06.24'},
+    {'check': false, 'title': 'will', 'subtitle': '2020.06.24'},
+    {'check': false, 'title': 'wow', 'subtitle': '2020.06.24'}
+  ];
+  List mediumList = ["sdfkjsldkjfls", 'will', 'wow', 'teo', 'loo'];
+  List lowList = ['sdfkjsldkjfls', 'will', 'wow', 'teo', 'loo'];
 
-  Widget _listItem(String text){
+  Widget _listItem(Map obj, BuildContext context, int index) {
     return ListTile(
-      title : Text(text),
+      leading: Checkbox(
+        value: obj['check'],
+        onChanged: (newValue) {
+          setState(() {
+            obj['check'] = newValue;
+          });
+        },
+      ),
+      title: Text(obj['title']),
+      subtitle: Text(obj['subtitle']),
+      trailing: IconButton(
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            builder: (BuildContext context) {
+              return Container(
+                color: Colors.white,
+                child: Column(
+                  children: <Widget>[
+                    ListTile(
+                      leading: Checkbox(
+                        value: obj['check'],
+                        onChanged: (newValue) {
+                          setState(() {
+                            obj['check'] = newValue;
+                          });
+                        },
+                      ),
+                      title: Text(obj['title']),
+                      subtitle: Text(obj['subtitle']),
+                    ),
+                    ListTile(
+                      onTap: () {
+                        print('update');
+                      },
+                      leading :
+                        IconButton(
+                          icon: Icon(
+                            Icons.edit,
+                          ),
+                        ),
+                      title: Text('수정'),
+                    ),
+                    ListTile(
+                      onTap: () {
+                        setState(() {
+                          highList.removeAt(index);
+                          Navigator.pop(context);
+                        });
+
+                      },
+                      leading :
+                      IconButton(
+                        icon: Icon(
+                          Icons.delete,
+                        ),
+                      ),
+                      title: Text('삭제'),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+        icon: Icon(Icons.more_vert),
+      ),
     );
   }
 
@@ -47,53 +122,40 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-            child: Column(
-                children: <Widget>[
-                  Text('HIGH'),
-                  Flexible(
-                    child: ListView.builder(
-                        itemCount: highList.length,
-                        itemBuilder: (context, index){return _listItem(highList[index]); } ),
-                  ),
-                  Text('MEDIUM'),
-                  Flexible(
-                    child: ListView.builder(
-                        itemCount: mediumList.length,
-                        itemBuilder: (context, index){return _listItem(mediumList[index]); } ),
-                  ),
-                  Text('LOW'),
-                  Flexible(
-                    child: ListView.builder(
-                        itemCount: lowList.length,
-                        itemBuilder: (context, index){return _listItem(lowList[index]); } ),
-                  ),
-                ],
+        heightFactor: double.infinity,
+        child: Column(
+          children: <Widget>[
+            Flexible(
+              child: ListView.builder(
+                  itemCount: highList.length,
+                  itemBuilder: (context, index) {
+                    return _listItem(highList[index], context, index);
+                  }),
             ),
-//              Column(
-//                children: <Widget>[
-//                  Text('HIGH'),
-//                  Flexible(
-//                    child: ListView.builder(
-//                        itemCount: mediumList.length,
-//                        itemBuilder: (context, index){return _listItem(mediumList[index]); } ),
-//                  ),
-//                ],
-//              ),
-//              Column(
-//                children: <Widget>[
-//                  Text('HIGH'),
-//                  Flexible(
-//                    child: ListView.builder(
-//                        itemCount: lowList.length,
-//                        itemBuilder: (context, index){return _listItem(lowList[index]); } ),
-//                  ),
-//                ],
-//              ),
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         tooltip: 'Increment',
         child: Icon(Icons.add),
         backgroundColor: Colors.indigo.shade700,
+        onPressed: () {
+          showBottomSheet(
+            context: context,
+            builder: (BuildContext context) {
+              return Container(
+                color: Colors.red,
+                child: Column(
+                  children: <Widget>[
+                    Text('asdfasdfa'),
+                    Text('asdfasdfa'),
+                    Text('asdfasdfa'),
+                  ],
+                ),
+              );
+            },
+          );
+        },
       ),
     );
   }

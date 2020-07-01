@@ -1,9 +1,16 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
+
 
 void main() {
   runApp(MyApp());
 }
+final route = {
+  '/': (context) => MyHomePage(title: '하면 좋은 일'),
+  '/create': (context) => MyNewTodo()
+};
 
 class MyApp extends StatelessWidget {
   @override
@@ -13,7 +20,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.indigo.shade600,
       ),
-      home: MyHomePage(title: '하면 좋은 일'),
+      routes:route ,
     );
   }
 
@@ -21,6 +28,102 @@ class MyApp extends StatelessWidget {
     ThemeData base = ThemeData.light();
     return base.copyWith(
       canvasColor: Colors.black12,
+    );
+  }
+}
+
+class MyNewTodo extends StatefulWidget {
+  @override
+  MyNewTodoWidget createState() => MyNewTodoWidget();
+}
+
+final DateTime now = DateTime.now();
+
+class MyNewTodoWidget extends State<MyNewTodo> {
+  String dropdownValue = 'High';
+  String destination = DateFormat('yyyy.MM.dd H:m').format(now);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        actions: <Widget>[
+          FlatButton(
+            textColor: Colors.white,
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text('저장'),
+            shape: CircleBorder(
+              side: BorderSide(
+                color: Colors.transparent,
+              ),
+            ),
+          )
+        ],
+        leading: IconButton(
+          icon: Icon(
+            Icons.arrow_back_ios,
+          ),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+        title: Text("일 벌리기"),
+
+      ),
+      body: Column(
+        children: <Widget>[
+          Container(
+            padding: EdgeInsets.all(20),
+            child:
+            Column(
+              children: <Widget>[
+                TextField(
+                    decoration: InputDecoration(hintText: '제목', border: OutlineInputBorder(
+                        borderRadius: const BorderRadius.all(Radius.circular(5))
+                    ))
+                ),
+                Text('제목을 입력해주세요',
+                  textAlign: TextAlign.left,
+                )
+              ],
+            )
+        ,
+          ),
+          TextField(
+            decoration: InputDecoration(hintText: '제목'),
+          ),
+          DropdownButton(
+            value: dropdownValue,
+            icon: Icon(
+              Icons.arrow_drop_down,
+            ),
+            items: <String>['High', 'Medium', 'Low'].map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            onChanged: (String newValue) {
+              setState(() {
+                dropdownValue = newValue;
+              });
+            },
+          ),
+          FlatButton(
+            child: Text(destination),
+            onPressed: () {
+              showDatePicker(context: context, initialDate: now, firstDate: DateTime(2010), lastDate: DateTime(2100), builder: (BuildContext context, Widget child){
+                return Theme(
+                  data : ThemeData.light(),
+                  child : child
+                );
+              });
+            },
+          )
+        ],
+      ),
     );
   }
 }
@@ -80,12 +183,11 @@ class _MyHomePageState extends State<MyHomePage> {
                       onTap: () {
                         print('update');
                       },
-                      leading :
-                        IconButton(
-                          icon: Icon(
-                            Icons.edit,
-                          ),
+                      leading: IconButton(
+                        icon: Icon(
+                          Icons.edit,
                         ),
+                      ),
                       title: Text('수정'),
                     ),
                     ListTile(
@@ -94,10 +196,8 @@ class _MyHomePageState extends State<MyHomePage> {
                           highList.removeAt(index);
                           Navigator.pop(context);
                         });
-
                       },
-                      leading :
-                      IconButton(
+                      leading: IconButton(
                         icon: Icon(
                           Icons.delete,
                         ),
@@ -140,21 +240,7 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Icon(Icons.add),
         backgroundColor: Colors.indigo.shade700,
         onPressed: () {
-          showBottomSheet(
-            context: context,
-            builder: (BuildContext context) {
-              return Container(
-                color: Colors.red,
-                child: Column(
-                  children: <Widget>[
-                    Text('asdfasdfa'),
-                    Text('asdfasdfa'),
-                    Text('asdfasdfa'),
-                  ],
-                ),
-              );
-            },
-          );
+          Navigator.pushNamed(context, "/create");
         },
       ),
     );
